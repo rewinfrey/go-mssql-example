@@ -18,7 +18,7 @@ BUILDFLAGS = GOFLAGS=-mod=vendor
 example:
 	$Q $(BUILDFLAGS) $(GO) build \
 		-ldflags '-X main.BuildVersion=$(APPVERSION)' \
-		-o $(QUERYBIN) ./cmd/example
+		-o $(EXAMPLEBIN) ./cmd/
 
 # Tests
 TESTFLAGS = -race -v
