@@ -14,7 +14,7 @@ func OpenDB() (*gorm.DB, error) {
 	connString := url.URL{
 		Scheme:   "sqlserver",
 		Host:     "localhost:1433",
-		User:     url.UserPassword("SA", ""),
+		User:     url.UserPassword("usernmae", "password"), // Please change me
 		RawQuery: "database=example",
 	}
 
