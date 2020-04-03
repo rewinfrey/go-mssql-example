@@ -99,7 +99,7 @@ func main() {
 	db.Scopes(nameForScope, fakeLimit).Where("namey = @p1", "KingJames").Find(&users6) // Error: mssql: Invalid usage of the option NEXT in the FETCH statement.
 	fmt.Println(users6)
 
-	// Because we cannot user a Scope for the order by / fetch dance, we then have to resort to `Raw` as the Gorm query interface:
+	// Because we cannot use a Scope for the order by / fetch dance, we then have to resort to `Raw` as the Gorm query interface:
 	var users7 []models.User
 	fmt.Println("raw with order / fetch:")
 	db.Raw("SELECT * FROM users WHERE name = @p1 ORDER BY id DESC OFFSET 0 ROWS FETCH NEXT 4 ROWS ONLY", "KingJames").Find(&users7)
