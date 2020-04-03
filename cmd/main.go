@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mssql"
 	config "github.com/rewinfrey/go-example/config"
+	models "github.com/rewinfrey/go-example/internal/models"
 )
 
 func main() {
@@ -42,6 +44,65 @@ func main() {
 		fmt.Println(id)
 	}
 
-	return
+	var user1 models.User
+	fmt.Println("first:")
+	db.First(&user1)
+	fmt.Println(user1)
 
+	var user2 models.User
+	fmt.Println("last:")
+	db.Last(&user2)
+	fmt.Println(user2)
+
+	var user3 models.User
+	fmt.Println("where with first:")
+	db.Where("id = @p1", id).First(&user3)
+	fmt.Println(user3)
+
+	var user4 models.User
+	fmt.Println("where with last:")
+	db.Where("id = @p1", id).Last(&user4)
+	fmt.Println(user4)
+
+	var user5 models.User
+	fmt.Println("take")
+	db.Take(&user5) // ERROR: mssql: Invalid usage of the option NEXT in the FETCH statement.
+	fmt.Println(user5)
+
+	var users []models.User
+	fmt.Println("find:")
+	db.Find(&users)
+	fmt.Println(users)
+
+	var users2 []models.User
+	fmt.Println("where with find:")
+	db.Where("name = @p1", "Rick").Find(&users2)
+	fmt.Println(users2)
+
+	var users3 []models.User
+	fmt.Println("limit with where and find:")
+	db.Limit(2).Where("name = @p1", "Rick").Find(&users3) // Error: mssql: Invalid usage of the option NEXT in the FETCH statement.
+	fmt.Println(users3)
+
+	var users4 []models.User
+	fmt.Println("scope with where")
+	db.Scopes(nameForScope).Where("namey = @p1", "Rick").Find(&users4)
+	fmt.Println(users4)
+
+	var users5 []models.User
+	fmt.Println("scope with where and limit")
+	db.Limit(2).Scopes(nameForScope).Where("namey = @p1", "Rick").Find(&users5) // Error: mssql: Invalid usage of the option NEXT in the FETCH statement.
+	fmt.Println(users5)
+
+	// Another quirk about this is errors don't seem to propagate unless a follow up query is issued, so I'm using this placeholder as the last query issued to force any errors to be reported.
+	var endUser models.User
+	fmt.Println("first:")
+	db.First(&endUser)
+	fmt.Println(endUser)
+
+	return
+}
+
+func nameForScope(db *gorm.DB) *gorm.DB {
+	return db.Where("name = @p1", "Rick")
 }
